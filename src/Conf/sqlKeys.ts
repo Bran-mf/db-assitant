@@ -1,0 +1,8 @@
+export enum SQL_KEYS{
+    KEY ='KEY',
+    CREATE='CREATE',
+    CONSTRAINT='CONSTRAINT',
+    PRIMARY='PRIMARY',
+    FOREIGN_KEY='FOREIGN KEY',
+    ALTER = 'ALTER'
+}
