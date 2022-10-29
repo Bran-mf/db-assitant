@@ -3,7 +3,7 @@
  const CREATE_INDEX = new RegExp('CREATE (UNIQUE)? ?INDEX .*?;','sg')
  const ALTER_TABLE = new RegExp('ALTER TABLE (\w*|`\w`).*?;','sg')
 
- export const TABLE_ATTRIBUTES = new RegExp(/(`\w+`|\w+|'\w) ((\w+ ?\(.+?\))|\w+) ?(.+ ?)+/,'g')
+ export const TABLE_ATTRIBUTES = new RegExp(/(`\w+`|'\w+'|\w+) ((\w+ ?\(.+?\))|\w+) ?(.+ ?)+/,'g')
 export const ROOT_REGEX = new RegExp(TABLES.source+"|"+CREATE_INDEX.source+"|"+ALTER_TABLE.source,'sg')
 
 

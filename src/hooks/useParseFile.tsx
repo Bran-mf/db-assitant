@@ -1,15 +1,11 @@
-import React, { useState } from "react";
-import { parsedTable } from "../Conf/Interfaces/ParsedTables";
-import {
-  ALTER_TABLE_PARTS,
-  ATT_PARTS,
-  ROOT_REGEX,
-  TABLE_ATTRIBUTES,
-} from "../Conf/regexs";
+import React, { useContext } from "react";
+
+import { ALTER_TABLE_PARTS, ATT_PARTS, ROOT_REGEX } from "../Conf/regexs";
 import { SQL_KEYS } from "../Conf/sqlKeys";
+import { DBContext } from "../providers/dbProvider";
 
 const useParseFile = () => {
-  const [file, setFile] = useState<Array<parsedTable>>();
+  const { file, setFile } = useContext(DBContext);
 
   const handleOpenFile = async (event: any) => {
     if (!event.target.files) return;
@@ -137,13 +133,15 @@ const useParseFile = () => {
   const handleParseTables = (lineText: string) => {
     const tableName = (lineText.match(/\w+/g) as Array<string>)[2];
 
-    const tableAttributes = getTableAttributes(lineText)
-      .match(TABLE_ATTRIBUTES)
-      ?.map((att_line) => att_line.match(ATT_PARTS));
+    const tableAttributes = getTableAttributes(lineText).match(/.+/g);
+
+    const tables2 = tableAttributes?.map((att_line) =>
+      att_line.match(ATT_PARTS)
+    );
 
     return {
       tableName,
-      tableAttributes: tableToObject(tableAttributes as [][]),
+      tableAttributes: tableToObject(tables2 as [][]),
     };
   };
 
@@ -166,6 +164,8 @@ const useParseFile = () => {
 
   const tableToObject = (tableContentAsArray: string[][]) => {
     const tableAsObject = tableContentAsArray.reduce((acc, attAsArray) => {
+      // console.log('attAsArray  1:>> ', attAsArray);
+
       if (isSQLKey(attAsArray[0])) {
         // 0 = instruction, 1 = name of key = 2 it could be (algo) or (`algo`)
         if (attAsArray[0] === SQL_KEYS.KEY) {
