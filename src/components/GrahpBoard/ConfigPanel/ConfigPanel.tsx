@@ -6,7 +6,6 @@ const ConfigPanel = () => {
   const { graphData, setGraph, graphOptions, setGraphOptions, container  } =
     useContext(DBContext);
   const handleEdgeLengthChange = ( value: any) => {
-    console.log('value :>> ', value);
     setGraphOptions((prev:any)=>({
         ...prev,edges:{...prev.edges,length:value}
     }))

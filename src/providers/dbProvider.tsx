@@ -1,4 +1,5 @@
-import { createContext, useRef, useState } from "react";
+import { createContext, useEffect, useRef, useState } from "react";
+import { Network } from "vis-network";
 import { GraphEdge, GraphNode } from "../components/GrahpBoard/GraphBoard";
 import { parsedTable } from "../Conf/Interfaces/ParsedTables";
 
@@ -7,8 +8,8 @@ const graphInitialState = {
   nodes: [],
 };
 const optionsInitialState = {
-  manipulation:{
-    enabled:true,
+  manipulation: {
+    enabled: true,
     addNode: true,
   },
   nodes: {
@@ -40,6 +41,29 @@ export const DBProvider = ({ children }: any) => {
     ...optionsInitialState,
   });
 
+  const [netWork, setNetWork] = useState<any>();
+  useEffect(() => {
+    console.log('container.current :>> ', container.current);
+    if (!container.current)  return ;
+      setNetWork(
+        new Network(
+          container.current,
+          { nodes: graphData.nodes, edges: graphData.edges },
+          graphOptions
+        )
+      );
+    
+  }, [container.current]);
+  useEffect(()=>{
+    if (!container.current)  return ;
+    netWork.setOptions({...graphOptions})
+  },[graphOptions])
+
+  useEffect(()=>{
+    if (!container.current)  return ;
+    netWork?.setData({...graphData})
+  },[graphData])
+
   return (
     <DBContext.Provider
       value={{
@@ -52,6 +76,7 @@ export const DBProvider = ({ children }: any) => {
         graphOptions,
         setGraphOptions,
         container,
+        netWork
       }}
     >
       {children}

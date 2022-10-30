@@ -18,7 +18,7 @@ export interface GraphEdge {
 }
 const GraphBoard = ({ parsedTables }: GraphBoardInterface) => {
 
-  const { file, graphData, setGraph,graphOptions, container } = useContext(DBContext);
+  const { file, setGraph, container } = useContext(DBContext);
 
   const tableToNodes = (parsedTable: parsedTable[]) =>
     parsedTable.map((table, index) => ({ id: index, label: table.tableName }));
@@ -51,15 +51,6 @@ const GraphBoard = ({ parsedTables }: GraphBoardInterface) => {
 
 
 
-  useEffect(() => {
-    const network =
-      container.current &&
-      new Network(
-        container.current,
-        { nodes: graphData.nodes, edges: graphData.edges },
-        graphOptions
-      );
-  }, [container, graphData.nodes, graphData.edges,graphOptions]);
 
   return <div ref={container} className={"w-full h-full"} />;
 };
