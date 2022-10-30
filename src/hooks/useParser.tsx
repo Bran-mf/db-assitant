@@ -4,7 +4,7 @@ import { ALTER_TABLE_PARTS, ATT_PARTS, ROOT_REGEX } from "../Conf/regexs";
 import { SQL_KEYS } from "../Conf/sqlKeys";
 import { DBContext } from "../providers/dbProvider";
 
-const useParseFile = () => {
+const useParser = () => {
   const { file, setFile } = useContext(DBContext);
 
   const handleOpenFile = async (event: any) => {
@@ -82,15 +82,18 @@ const useParseFile = () => {
           return acc;
         }
         if (line.startsWith("ALTER TABLE")) {
-          const contrainsToArrays = line.match(/.+/g) as Array<string>;
+          const contrainsToArrays = (line.match(/.+/g) as Array<string>).filter(line=> line.length>1);
+      
+
           const tableName = contrainsToArrays[0].match(/\w+/g) as Array<string>;
-          contrainsToArrays.slice(1).forEach((constrainAsArr) => {
+          // console.log('contrainsToArrays', contrainsToArrays[0])
+          const fixMultipleLines = contrainsToArrays.length ===1? [contrainsToArrays[0].replace(/ALTER TABLE (\w+|`\w+`) /g,'')] :contrainsToArrays.slice(1)
+          fixMultipleLines.forEach((constrainAsArr) => {
             const algo = parseConstrains(tableName[2], constrainAsArr);
             if (algo.type !== "INDEX") {
               acc.constrains.push(algo);
             }
           });
-
           return acc;
         }
         return acc;
@@ -99,6 +102,7 @@ const useParseFile = () => {
     );
   };
   const parseConstrains = (tableName: string, constrainInstruction: string) => {
+
     const constrainAsArrayString = constrainInstruction.match(
       ALTER_TABLE_PARTS
     ) as Array<string>;
@@ -164,8 +168,6 @@ const useParseFile = () => {
 
   const tableToObject = (tableContentAsArray: string[][]) => {
     const tableAsObject = tableContentAsArray.reduce((acc, attAsArray) => {
-      // console.log('attAsArray  1:>> ', attAsArray);
-
       if (isSQLKey(attAsArray[0])) {
         // 0 = instruction, 1 = name of key = 2 it could be (algo) or (`algo`)
         if (attAsArray[0] === SQL_KEYS.KEY) {
@@ -217,4 +219,4 @@ const useParseFile = () => {
   return { handleOpenFile, file };
 };
 
-export default useParseFile;
+export default useParser;

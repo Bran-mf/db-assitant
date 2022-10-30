@@ -1,10 +1,10 @@
 import React from "react";
 import { Container } from "react-bootstrap";
-import useParseFile from "../../hooks/useParseFile";
+import useParser from "../../hooks/useParser";
 import TablesAsTables from "../TablesViews/TablesAsTables/TablesAsTables";
 
 const MainPage = () => {
-  const { file, handleOpenFile } = useParseFile();
+  const { file, handleOpenFile } = useParser();
 
   return (
     <Container fluid className={'h-full'} >

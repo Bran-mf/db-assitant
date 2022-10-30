@@ -1,36 +1,39 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useContext, useEffect, useMemo, useRef } from "react";
 import { Network } from "vis-network";
 import { parsedTable } from "../../Conf/Interfaces/ParsedTables";
 import { getEdgesNamesFromTable } from "../../Helpers/GaphsHelpers";
+import { DBContext } from "../../providers/dbProvider";
 interface GraphBoardInterface {
   parsedTables: parsedTable[];
 }
-interface GraphNode {
+export interface GraphNode {
   id: number;
   label: string;
+  [index: string]: any;
 }
-interface GraphEdge {
+export interface GraphEdge {
   from: number;
   to: number;
+  [index: string]: any;
 }
 const GraphBoard = ({ parsedTables }: GraphBoardInterface) => {
-  const container = useRef(null);
+
+  const { file, graphData, setGraph,graphOptions, container } = useContext(DBContext);
+
   const tableToNodes = (parsedTable: parsedTable[]) =>
     parsedTable.map((table, index) => ({ id: index, label: table.tableName }));
 
-  const nodes = useMemo(
-    () =>
-      tableToNodes(parsedTables).map((node) => ({
-        ...node,
-        color: { background: "#00C2FC" },
-      })),
-    [parsedTables]
-  );
+  useEffect(() => {
+    const nodes = tableToNodes(parsedTables).map((node) => ({
+      ...node,
+    }));
 
-  const eedgex2 = useMemo(
-    () => parsedTables.map(getEdgesNamesFromTable).flat(),
-    [parsedTables]
-  );
+    const edges = getEdgesIds(
+      nodes,
+      parsedTables.map(getEdgesNamesFromTable).flat()
+    );
+    setGraph((prev: any) => ({ ...prev, edges, nodes }));
+  }, [file]);
 
   const getEdgesIds = (
     nodes: GraphNode[],
@@ -46,26 +49,17 @@ const GraphBoard = ({ parsedTables }: GraphBoardInterface) => {
     }));
   };
 
-  const options = {
-    nodes: {
-      shape: "circle",
-    },
-    edges: {
-      arrows: {
-        to: {
-          enabled: true,
-          type: "arrow",
-        },
-      },
-      length: 700,
-    },
-  };
-  const edges = getEdgesIds(nodes, eedgex2);
+
+
   useEffect(() => {
     const network =
       container.current &&
-      new Network(container.current, { nodes, edges }, options);
-  }, [container, nodes, edges]);
+      new Network(
+        container.current,
+        { nodes: graphData.nodes, edges: graphData.edges },
+        graphOptions
+      );
+  }, [container, graphData.nodes, graphData.edges,graphOptions]);
 
   return <div ref={container} className={"w-full h-full"} />;
 };
