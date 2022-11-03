@@ -3,6 +3,7 @@ import { Card, Col, Container, Row } from "react-bootstrap";
 import CustomAccordion from "../../../components/Acordion/CustomAccordion";
 import ConfigPanel from "../../../components/GrahpBoard/ConfigPanel/ConfigPanel";
 import GraphBoard from "../../../components/GrahpBoard/GraphBoard";
+import SubGroupsPanel from "../../../components/SubGroupsPanel/SubGroupsPanel";
 import Table from "../../../components/Table/Table";
 import TablesSubPanel from "../../../components/TablesSubPanel/TablesSubPanel";
 import { parsedTable } from "../../../Conf/Interfaces/ParsedTables";
@@ -18,6 +19,7 @@ const TablesAsTables = ({ datax }: ITablesAsTables) => {
           accordionElement={[
             { tittle: "Tablas", elements: <TablesSubPanel /> },
             { tittle: "Configs", elements: <ConfigPanel /> },
+            {tittle:'Groups',elements:<SubGroupsPanel/>}
           ]}
         />
       </div>

@@ -86,7 +86,6 @@ const useParser = () => {
       
 
           const tableName = contrainsToArrays[0].match(/\w+/g) as Array<string>;
-          // console.log('contrainsToArrays', contrainsToArrays[0])
           const fixMultipleLines = contrainsToArrays.length ===1? [contrainsToArrays[0].replace(/ALTER TABLE (\w+|`\w+`) /g,'')] :contrainsToArrays.slice(1)
           fixMultipleLines.forEach((constrainAsArr) => {
             const algo = parseConstrains(tableName[2], constrainAsArr);

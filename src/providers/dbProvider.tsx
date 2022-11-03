@@ -8,12 +8,16 @@ const graphInitialState = {
   nodes: [],
 };
 const optionsInitialState = {
-  manipulation: {
-    enabled: true,
-    addNode: true,
-  },
   nodes: {
     shape: "circle",
+    color: {
+      border: '#2B7CE9',
+      background: '#97C2FC',
+      highlight: {
+        border: '#2B7CE9',
+        background: '#FDAA99'
+      },
+    },
   },
   edges: {
     arrows: {
@@ -24,6 +28,7 @@ const optionsInitialState = {
     },
     length: 700,
   },
+  physics: true
 };
 export interface IDBGraphDataState {
   edges: Array<GraphEdge>;
@@ -40,29 +45,36 @@ export const DBProvider = ({ children }: any) => {
   const [graphOptions, setGraphOptions] = useState<any>({
     ...optionsInitialState,
   });
-
   const [netWork, setNetWork] = useState<any>();
   useEffect(() => {
-    console.log('container.current :>> ', container.current);
-    if (!container.current)  return ;
-      setNetWork(
-        new Network(
-          container.current,
-          { nodes: graphData.nodes, edges: graphData.edges },
-          graphOptions
-        )
-      );
-    
+    if (!container.current) return;
+    setNetWork(
+      new Network(
+        container.current,
+        { nodes: graphData.nodes, edges: graphData.edges },
+        graphOptions
+      )
+    );
   }, [container.current]);
-  useEffect(()=>{
-    if (!container.current)  return ;
-    netWork.setOptions({...graphOptions})
-  },[graphOptions])
 
-  useEffect(()=>{
-    if (!container.current)  return ;
-    netWork?.setData({...graphData})
-  },[graphData])
+  useEffect(() => {
+    if (!container.current) return;
+    netWork.setOptions({ ...graphOptions });
+  }, [graphOptions]);
+
+  useEffect(() => {
+    if (!container.current) return;
+    netWork?.setData({ ...graphData });
+  }, [graphData]);
+
+   const editNode = (node_id: number, newNode: GraphNode) => {
+    setGraph((e) => ({
+      ...e,
+      nodes: e.nodes.map((node) =>
+        node.id === node_id ? { ...newNode } : node
+      ),
+    }));
+  };
 
   return (
     <DBContext.Provider
@@ -76,7 +88,8 @@ export const DBProvider = ({ children }: any) => {
         graphOptions,
         setGraphOptions,
         container,
-        netWork
+        netWork,
+        editNode,
       }}
     >
       {children}
