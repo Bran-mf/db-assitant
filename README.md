@@ -1,7 +1,7 @@
 
 
 # DB Assitant 
-## This App aims to help developers on some tasks related with relational Databases.
+## This App aims to help developers on some  relational Database tasks .
 ### Current Modules:
 - Visualize DB as Graph. ( in progress )
 
